@@ -40,9 +40,16 @@ class ForgotUsernameController extends Controller
     {
         $email = $request->get('email');
 
-        $v = validator($request->all(), [
-            'email' => 'required',
-        ]);
+        if (config('captcha.enabled') == false) {
+            $v = validator($request->all(), [
+                'email' => 'required',
+            ]);
+        } else {
+            $v = validator($request->all(), [
+                'email' => 'required',
+                'g-recaptcha-response' => 'required|recaptcha',
+            ]);
+        }
 
         if ($v->fails()) {
             return redirect()->route('username.request')
@@ -52,14 +59,14 @@ class ForgotUsernameController extends Controller
 
             if (empty($user)) {
                 return redirect()->route('username.request')
-                    ->withErrors('We could not find this email in our system!');
+                    ->withErrors(trans('email.no-email-found'));
             }
 
             //send username reminder notification
             $user->notify(new UsernameReminder());
 
             return redirect()->route('login')
-                ->withSuccess('Your username has been sent to your email address!');
+                ->withSuccess(trans('email.username-sent'));
         }
     }
 }

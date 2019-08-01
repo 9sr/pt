@@ -28,7 +28,7 @@
             @lang('auth.need-invite')
         </div>
     @endif
-    <svg viewBox="0 0 1320 100">
+    <svg viewBox="0 0 450 100" class="sitebanner">
         <symbol id="s-text">
             <text text-anchor="middle"
                   x="50%" y="50%" dy=".35em">
@@ -59,28 +59,10 @@
             @csrf
             <input type="text" id="username" class="fadeIn second" name="username"
                    placeholder="@lang('auth.username')" required autofocus>
-            @if ($errors->has('username'))
-                <br>
-                <span class="help-block text-red">
-                    <strong>{{ $errors->first('username') }}</strong>
-                </span>
-            @endif
             <input type="email" id="email" class="fadeIn third" name="email" placeholder="@lang('auth.email')"
                    required>
-            @if ($errors->has('email'))
-                <br>
-                <span class="help-block text-red">
-                    <strong>{{ $errors->first('email') }}</strong>
-                </span>
-            @endif
             <input type="password" id="password" class="fadeIn third" name="password"
                    placeholder="@lang('auth.password')" required>
-            @if ($errors->has('password'))
-                <br>
-                <span class="help-block text-red">
-                    <strong>{{ $errors->first('password') }}</strong>
-                </span>
-            @endif
             @if (config('captcha.enabled') == true)
                 <div class="text-center">
                     <div class="form-group row">

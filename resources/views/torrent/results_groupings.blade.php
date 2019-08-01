@@ -1,4 +1,11 @@
 <div style="width: 100% !important; display: table !important;">
+    <div class="align-center" style="width: 100% !important; display: table-cell !important;">
+        @if($links)
+            {{ $links->links() }}
+        @endif
+    </div>
+</div>
+<div style="width: 100% !important; display: table !important;">
     <div class="mb-5" style="width: 100% !important; display: table-cell !important;">
         @if($torrents && is_array($torrents))
             @foreach ($torrents as $k => $c)
@@ -17,39 +24,39 @@
                                 </span>&nbsp;
                             @endif
                                 <span class="badge-user text-bold" style="float: right;">
-                                                <i class="{{ config('other.font-awesome') }} fa-star text-gold"></i>
-                                                @if($t->movie && ($t->movie->imdbRating || $t->movie->tmdbVotes))
+                                                <i class="{{ config('other.font-awesome') }} fa-thumbs-up text-gold"></i>
+                                                @if($t->meta && ($t->meta->imdbRating || $t->meta->tmdbVotes))
                                         @if ($user->ratings == 1)
-                                            {{ $t->movie->imdbRating }}/10 ({{ $t->movie->imdbVotes }} @lang('torrent.votes'))
+                                            {{ $t->meta->imdbRating }}/10 ({{ $t->meta->imdbVotes }} @lang('torrent.votes'))
                                         @else
-                                            {{ $t->movie->tmdbRating }}/10 ({{ $t->movie->tmdbVotes }} @lang('torrent.votes'))
+                                            {{ $t->meta->tmdbRating }}/10 ({{ $t->meta->tmdbVotes }} @lang('torrent.votes'))
                                         @endif
                                     @endif
                                             </span>
                         </div>
                         <div class="card_alt">
                             <div class="body_poster">
-                                @if($t->movie && $t->movie->poster)
-                                    <img src="{{ $t->movie->poster }}" class="show-poster" data-image='<img src="{{ $t->movie->poster }}" alt="@lang('torrent.poster')" style="height: 1000px;">'>
+                                @if($t->meta && $t->meta->poster)
+                                    <img src="{{ $t->meta->poster }}" class="show-poster" data-image='<img src="{{ $t->meta->poster }}" alt="@lang('torrent.poster')" style="height: 1000px;">'>
                                 @else
                                     <img src="https://via.placeholder.com/600x900" />
                                 @endif
                             </div>
                             <div class="body_grouping" style="width: 100%;">
                                 <h3 class="description_title">
-                                    {{ ($t->movie->title ? $t->movie->title : $t->name) }}
-                                    @if($t->movie && $t->movie->releaseYear)
-                                        <span class="text-bold text-pink"> {{ $t->movie->releaseYear }}</span>
+                                    {{ ($t->meta->title ? $t->meta->title : $t->name) }}
+                                    @if($t->meta && $t->meta->releaseYear)
+                                        <span class="text-bold text-pink"> {{ $t->meta->releaseYear }}</span>
                                     @endif
                                 </h3>
-                                @if ($t->movie && $t->movie->genres)
-                                    @foreach ($t->movie->genres as $genre)
+                                @if ($t->meta && $t->meta->genres)
+                                    @foreach ($t->meta->genres as $genre)
                                         <span class="genre-label">{{ $genre }}</span>
                                     @endforeach
                                 @endif
                                 <p class="description_plot" style="width: 100%;">
-                                    @if($t->movie && $t->movie->plot)
-                                        {{ $t->movie->plot }}
+                                    @if($t->meta && $t->meta->plot)
+                                        {{ $t->meta->plot }}
                                     @endif
                                 </p>
                                 <div class="card_holder" style="width: 100%;" ;>
@@ -126,7 +133,7 @@
                                                             </a>
                                                         @endif
 
-                                                        <span data-toggle="tooltip" data-original-title="Bookmark" id="torrentBookmark{{ $current->id }}" torrent="{{ $current->id }}" state="{{ $current->bookmarked() ? 1 : 0}}" class="torrentBookmark"></span>
+                                                        <span data-toggle="tooltip" data-original-title="Bookmark" id="torrentBookmark{{ $current->id }}" torrent="{{ $current->id }}" state="{{ $bookmarks->where('torrent_id', $current->id)->first() ? 1 : 0}}" class="torrentBookmark"></span>
 
                                                         <br>
                                                         @if ($current->anon == 1)
@@ -194,13 +201,13 @@
                                                                         @php $freeleech_token = \App\Models\FreeleechToken::where('user_id', '=', $user->id)->where('torrent_id', '=', $current->id)->first(); @endphp
                                                                         @if ($freeleech_token)
                                                                             <span class='badge-extra text-bold'>
-                                <i class='{{ config("other.font-awesome") }} fa-coins text-bold' data-toggle='tooltip' title=''
+                                <i class='{{ config("other.font-awesome") }} fa-star text-bold' data-toggle='tooltip' title=''
                                    data-original-title='@lang('torrent.freeleech-token')'></i> @lang('torrent.freeleech-token')
                             </span>
                                                                         @endif
 
                                                                         @if ($current->featured == 1)
-                                                                            <span class='badge-extra text-bold' style='background-image:url(https://i.imgur.com/F0UCb7A.gif);'>
+                                                                            <span class='badge-extra text-bold' style='background-image:url(/img/sparkels.gif);'>
                                 <i class='{{ config("other.font-awesome") }} fa-certificate text-pink' data-toggle='tooltip' title=''
                                    data-original-title='@lang('torrent.featured')'></i> @lang('torrent.featured')
                             </span>

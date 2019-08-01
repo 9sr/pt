@@ -26,7 +26,7 @@ class LoginController extends Controller
     protected $redirectTo = '/';
 
     // Max Attempts Until Lockout
-    public $maxAttempts = 5;
+    public $maxAttempts = 3;
 
     // Minutes Lockout
     public $decayMinutes = 60;
@@ -77,7 +77,7 @@ class LoginController extends Controller
             $request->session()->invalidate();
 
             return redirect()->route('login')
-                ->withErrors('This account has not been activated and is still in validating group. Please check your email for activation link. If you did not receive the activation code, please click "forgot password" and complete the steps.');
+                ->withErrors(trans('auth.not-activated'));
         }
 
         if ($user->group_id == $bannedGroup->id) {
@@ -85,7 +85,7 @@ class LoginController extends Controller
             $request->session()->invalidate();
 
             return redirect()->route('login')
-                ->withErros('This account is Banned!');
+                ->withErrors(trans('auth.banned'));
         }
 
         if ($user->group_id == $disabledGroup->id) {
@@ -99,8 +99,8 @@ class LoginController extends Controller
             $user->disabled_at = null;
             $user->save();
 
-            return redirect('/')
-                ->withSuccess('Welcome Back! Your Account Is No Longer Disabled!');
+            return redirect()->to('/')
+                ->withSuccess(trans('auth.welcome-restore'));
         }
 
         if (auth()->viaRemember() && $user->group_id == $disabledGroup->id) {
@@ -114,16 +114,16 @@ class LoginController extends Controller
             $user->disabled_at = null;
             $user->save();
 
-            return redirect('/')
-                ->withSuccess('Welcome Back! Your Account Is No Longer Disabled!');
+            return redirect()->to('/')
+                ->withSuccess(trans('auth.welcome-restore'));
         }
 
         if ($user->read_rules == 0) {
-            return redirect(config('other.rules_url'))
-                ->withWarning('Please Read And Accept Our Rules By Scrolling To Bottom Of Page.');
+            return redirect()->to(config('other.rules_url'))
+                ->withWarning(trans('auth.require-rules'));
         }
 
-        return redirect('/')
-            ->withSuccess('Welcome Back!');
+        return redirect()->to('/')
+            ->withSuccess(trans('auth.welcome'));
     }
 }

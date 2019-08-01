@@ -78,6 +78,19 @@
                         <div class="col-sm-2">
                             <input type="text" class="form-control facetedSearch" trigger="keyup" id="mal" placeholder="MAL #">
                         </div>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control facetedSearch" trigger="keyup" id="igdb" placeholder="IGDB #">
+                        </div>
+                    </div>
+
+                    <div class="mx-0 mt-5 form-group fatten-me">
+                        <label for="release_year" class="mt-5 col-sm-1 label label-default fatten-me">Year Range</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control facetedSearch" trigger="keyup"id="start_year" placeholder="Start Year">
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control facetedSearch" trigger="keyup" id="end_year" placeholder="End Year">
+                        </div>
                     </div>
 
                     <div class="mx-0 mt-5 form-group fatten-me">
@@ -107,7 +120,7 @@
                     </div>
 
                     <div class="mx-0 mt-5 form-group fatten-me">
-                        <label for="genre" class="mt-5 col-sm-1 label label-default fatten-me">Genre</label>
+                        <label for="genre" class="mt-5 col-sm-1 label label-default fatten-me">@lang('torrent.genre')</label>
                         <div class="col-sm-10">
                             @foreach ($repository->tags() as $id => $genre)
                                 <span class="badge-user">
@@ -253,7 +266,7 @@
                     </button>
                     <button class='btn btn-info btn-circle' type='button' data-toggle='tooltip' title=''
                         data-original-title='@lang('torrent.not-completed')!'>
-                        <i class='{{ config("other.font-awesome") }} fa-hand-paper'></i>
+                        <i class='{{ config("other.font-awesome") }} fa-spinner'></i>
                     </button>
                     <button class='btn btn-danger btn-circle' type='button' data-toggle='tooltip' title=''
                         data-original-title='@lang('torrent.completed-not-seeding')!'>

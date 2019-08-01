@@ -13,7 +13,8 @@
 
 namespace App\Http\Controllers\Staff;
 
-use App\Models\Client;
+use App\Models\Seedbox;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class SeedboxController extends Controller
@@ -25,7 +26,7 @@ class SeedboxController extends Controller
      */
     public function index()
     {
-        $seedboxes = Client::with('user')->latest()->paginate(50);
+        $seedboxes = Seedbox::with('user')->latest()->paginate(50);
 
         return view('Staff.seedbox.index', ['seedboxes' => $seedboxes]);
     }
@@ -37,10 +38,10 @@ class SeedboxController extends Controller
      *
      * @return Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $user = auth()->user();
-        $seedbox = Client::findOrFail($id);
+        $user = $request->user();
+        $seedbox = Seedbox::findOrFail($id);
 
         abort_unless($user->group->is_modo, 403);
         $seedbox->delete();

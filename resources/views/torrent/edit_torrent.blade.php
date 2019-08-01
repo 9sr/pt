@@ -43,6 +43,11 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="name">IGDB ID <b>(@lang('request.required'))</b></label>
+                    <input type="number" name="igdb" value="{{ $torrent->igdb }}" class="form-control" required>
+                </div>
+
+                <div class="form-group">
                     <label for="category_id">@lang('torrent.category')</label>
                     <select name="category_id" class="form-control">
                         <option value="{{ $torrent->category->id }}" selected>{{ $torrent->category->name  }}
@@ -77,8 +82,7 @@
                 </div>
 
                 <label for="hidden"
-                       class="control-label">@lang('common.anonymous') {{ strtolower(trans('common.upload')) }}
-                    ?</label>
+                       class="control-label">@lang('common.anonymous')?</label>
                 <div class="radio-inline">
                     <label><input type="radio" name="anonymous" @if ($torrent->anon == 1) checked
                                   @endif value="1">@lang('common.yes')</label>

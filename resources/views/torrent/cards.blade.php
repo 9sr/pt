@@ -76,6 +76,19 @@
                         <div class="col-sm-2">
                             <input type="text" class="form-control facetedSearch" trigger="keyup" id="mal" placeholder="MAL #">
                         </div>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control facetedSearch" trigger="keyup" id="igdb" placeholder="IGDB #">
+                        </div>
+                    </div>
+
+                    <div class="mx-0 mt-5 form-group fatten-me">
+                        <label for="release_year" class="mt-5 col-sm-1 label label-default fatten-me">Year Range</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control facetedSearch" trigger="keyup"id="start_year" placeholder="Start Year">
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control facetedSearch" trigger="keyup" id="end_year" placeholder="End Year">
+                        </div>
                     </div>
 
                     <div class="mx-0 mt-5 form-group fatten-me">
@@ -105,7 +118,7 @@
                     </div>
 
                     <div class="mx-0 mt-5 form-group fatten-me">
-                        <label for="genre" class="mt-5 col-sm-1 label label-default fatten-me">Genre</label>
+                         <label for="genre" class="mt-5 col-sm-1 label label-default fatten-me">@lang('torrent.genre')</label>
                         <div class="col-sm-10">
                             @foreach ($repository->tags() as $id => $genre)
                                 <span class="badge-user">
@@ -212,6 +225,9 @@
             <span id="facetedHeader"></span>
             <div id="facetedSearch" type="card" font-awesome="{{ config('other.font-awesome') }}">
                 <div style="width: 100% !important; display: table !important;">
+                    <div class="align-center" style="width: 100% !important; display: table-cell !important;">{{ $torrents->links() }}</div>
+                </div>
+                <div style="width: 100% !important; display: table !important;">
                     <div class="mb-5" style="width: 100% !important; display: table-cell !important;">
                         @foreach ($torrents as $k => $t)
                             <div class="col-md-4">
@@ -228,26 +244,53 @@
                                     </div>
                                     <div class="card_body">
                                         <div class="body_poster">
-                                            @if($t->movie && $t->movie->poster)
-                                                <img src="{{ $t->movie->poster }}" class="show-poster" data-image='<img src="{{ $t->movie->poster }}" alt="@lang('torrent.poster')" style="height: 1000px;">'>
+                                            @if ($t->category->movie_meta || $t->category->tv_meta && isset($t->meta) && $t->meta->poster && $t->meta->title)
+                                                <img src="{{ $t->meta->poster ?? 'https://via.placeholder.com/600x900' }}" class="show-poster"
+                                                     data-name='<i style="color: #a5a5a5;">{{ $t->meta->title ?? 'N/A' }}</i>' data-image='<img src="{{ $t->meta->poster ?? 'https://via.placeholder.com/600x900' }}" alt="@lang('torrent.poster')" style="height: 1000px;">'
+                                                     class="torrent-poster-img-small show-poster" alt="@lang('torrent.poster')">
+                                            @endif
+
+                                            @if ($t->category->game_meta && isset($t->meta) && $t->meta->cover->image_id && $t->meta->name)
+                                                <img src="https://images.igdb.com/igdb/image/upload/t_original/{{ $t->meta->cover->image_id }}.jpg" class="show-poster"
+                                                     data-name='<i style="color: #a5a5a5;">{{ $t->meta->name ?? 'N/A' }}</i>' data-image='<img src="https://images.igdb.com/igdb/image/upload/t_original/{{ $t->meta->cover->image_id }}.jpg" alt="@lang('torrent.poster')" style="height: 1000px;">'
+                                                     class="torrent-poster-img-small show-poster" alt="@lang('torrent.poster')">
+                                            @endif
+
+                                            @if ($t->category->no_meta || $t->category->music_meta || ! $t->meta)
+                                                <img src="https://via.placeholder.com/600x900" class="show-poster"
+                                                     data-name='<i style="color: #a5a5a5;">N/A</i>' data-image='<img src="https://via.placeholder.com/600x900" alt="@lang('torrent.poster')" style="height: 1000px;">'
+                                                     class="torrent-poster-img-small show-poster" alt="@lang('torrent.poster')">
                                             @endif
                                         </div>
                                         <div class="body_description">
                                             <h3 class="description_title">
                                                 <a href="{{ route('torrent', ['slug' => $t->slug, 'id' => $t->id]) }}">{{ $t->name }}
-                                                    @if($t->movie && $t->movie->releaseYear)
-                                                        <span class="text-bold text-pink"> {{ $t->movie->releaseYear }}</span>
+                                                    @if($t->category->movie_meta || $t->category->tv_meta && isset($t->meta) && $t->meta->releaseYear)
+                                                        <span class="text-bold text-pink"> {{ $t->meta->releaseYear }}</span>
+                                                    @endif
+                                                    @if($t->category->game_meta && isset($t->meta) && $t->meta->first_release_date)
+                                                        <span class="text-bold text-pink"> {{ date('Y', strtotime( $t->meta->first_release_date)) }}</span>
                                                     @endif
                                                 </a>
                                             </h3>
-                                            @if ($t->movie && $t->movie->genres)
-                                                @foreach ($t->movie->genres as $genre)
+                                            @if ($t->category->movie_meta && isset($t->meta) && $t->meta->genres)
+                                                @foreach ($t->meta->genres as $genre)
                                                     <span class="genre-label">{{ $genre }}</span>
                                                 @endforeach
                                             @endif
+                                            @if ($t->category->tv_meta && isset($t->meta) && $t->meta->genres)
+                                                @foreach ($t->meta->genres as $genre)
+                                                    <span class="genre-label">{{ $genre }}</span>
+                                                @endforeach
+                                            @endif
+                                            @if ($t->category->game_meta && isset($t->meta) && $t->meta->genres)
+                                                @foreach ($t->meta->genres as $genre)
+                                                    <span class="genre-label">{{ $genre->name }}</span>
+                                                @endforeach
+                                            @endif
                                             <p class="description_plot">
-                                                @if($t->movie && $t->movie->plot)
-                                                    {{ $t->movie->plot }}
+                                                @if($t->category->movie_meta || $t->category->tv_meta && $t->meta && $t->meta->plot)
+                                                    {{ $t->meta->plot }}
                                                 @endif
                                             </p>
                                         </div>
@@ -255,9 +298,13 @@
                                     <div class="card_footer">
                                         <div style="float: left;">
                                             @if ($t->anon == 1)
-                                                <span class="badge-user text-orange text-bold">{{ strtoupper(trans('common.anonymous')) }} @if (auth()->user()->id == $t->user->id || auth()->user()->group->is_modo)
-                                                        <a href="{{ route('profile', ['username' => $t->user->username, 'id' => $t->user->id]) }}">({{ $t->user->username }}
-                                                    )</a>@endif</span>
+                                                <span class="badge-user text-orange text-bold">{{ strtoupper(trans('common.anonymous')) }}
+                                                    @if (auth()->user()->id == $t->user->id || auth()->user()->group->is_modo)
+                                                        <a href="{{ route('profile', ['username' => $t->user->username, 'id' => $t->user->id]) }}">
+                                                            ({{ $t->user->username }})
+                                                        </a>
+                                                    @endif
+                                                </span>
                                             @else
                                                 <a href="{{ route('profile', ['username' => $t->user->username, 'id' => $t->user->id]) }}">
                                             <span class="badge-user text-bold" style="color:{{ $t->user->group->color }}; background-image:{{ $t->user->group->effect }};">
@@ -268,12 +315,12 @@
                                             @endif
                                         </div>
                                         <span class="badge-user text-bold" style="float: right;">
-                                            <i class="{{ config('other.font-awesome') }} fa-star text-gold"></i>
-                                            @if($t->movie && ($t->movie->imdbRating || $t->movie->tmdbVotes))
+                                            <i class="{{ config('other.font-awesome') }} fa-thumbs-up text-gold"></i>
+                                            @if($t->meta && ($t->meta->imdbRating || $t->meta->tmdbVotes))
                                                 @if ($user->ratings == 1)
-                                                    {{ $t->movie->imdbRating }}/10 ({{ $t->movie->imdbVotes }} @lang('torrent.votes'))
+                                                    {{ $t->meta->imdbRating }}/10 ({{ $t->meta->imdbVotes }} @lang('torrent.votes'))
                                                 @else
-                                                    {{ $t->movie->tmdbRating }}/10 ({{ $t->movie->tmdbVotes }} @lang('torrent.votes'))
+                                                    {{ $t->meta->tmdbRating }}/10 ({{ $t->meta->tmdbVotes }} @lang('torrent.votes'))
                                                 @endif
                                             @endif
                                         </span>

@@ -34,7 +34,7 @@
                 <table class="table table-condensed table-striped table-bordered">
                     <thead>
                     <tr>
-                        <th class="col-md-1">Category/Type</th>
+                        <th class="col-md-1">@lang('torrent.category') / @lang('torrent.type')</th>
                         <th>@lang('common.name')</th>
                         <th><i class="{{ config('other.font-awesome') }} fa-clock"></i></th>
                         <th><i class="{{ config('other.font-awesome') }} fa-file"></i></th>
@@ -100,7 +100,7 @@
                                     @if ($history->seeder == 0 && $history->active == 0 && $history->completed_at == null)
                                         <button class="btn btn-info btn-circle" type="button" data-toggle="tooltip"
                                                 data-original-title="Started Downloading But Never Completed!">
-                                            <i class="{{ config('other.font-awesome') }} fa-hand-paper"></i>
+                                            <i class="{{ config('other.font-awesome') }} fa-spinner"></i>
                                         </button>
                                     @endif
 
@@ -176,12 +176,12 @@
                                 @php $freeleech_token = \App\Models\FreeleechToken::where('user_id', '=', $user->id)->where('torrent_id', '=', $bookmark->id)->first(); @endphp
                                 @if ($freeleech_token)
                                     <span class='badge-extra text-bold'>
-                                        <i class='{{ config("other.font-awesome") }} fa-coins text-bold' data-toggle='tooltip' data-original-title='Freeleech Token'></i> Freeleech Token
+                                        <i class='{{ config("other.font-awesome") }} fa-star text-bold' data-toggle='tooltip' data-original-title='Freeleech Token'></i> Freeleech Token
                                     </span>
                                 @endif
 
                                 @if ($bookmark->featured == 1)
-                                    <span class='badge-extra text-bold' style='background-image:url(https://i.imgur.com/F0UCb7A.gif);'>
+                                    <span class='badge-extra text-bold' style='background-image:url(/img/sparkels.gif);'>
                                         <i class='{{ config("other.font-awesome") }} fa-certificate text-pink' data-toggle='tooltip' data-original-title='Featured Torrent'></i> Featured
                                     </span>
                                 @endif
@@ -286,7 +286,7 @@
                 @if (count($bookmarks) <= 0)
                     <div class="row">
                         <div class="col-md-12 text-center">
-                            <h1 class="text-blue"><i class="{{ config('other.font-awesome') }} fa-frown text-blue"></i> No Boomarks</h1>
+                            <h1 class="text-blue"><i class="{{ config('other.font-awesome') }} fa-frown text-blue"></i> @lang('torrent.no-bookmarks')</h1>
                         </div>
                     </div>
                 @endif
